@@ -1,0 +1,70 @@
+Tabla tipo_usuario:
+ - codigo_tipo_usuario
+ - nombre_tipo_usuario
+
+Tabla usuario:
+ - codigo_usuario
+ - nombre_usuario
+ - apellido_paterno_usuario
+ - apellido_materno_usuario
+ - dni_usuario
+ - codigo_tipo_usuario
+ - estado_usuario
+
+Tabla administrador:
+ - codigo_usuario
+ - email_administrador
+ - pwd_administrador
+
+Tabla alumno:
+ - codigo_usuario
+ - edad_alumno
+
+Tabla categoría:
+ - codigo_categoria
+ - nombre_categoria
+
+Tabla curso:
+ - codigo_curso
+ - nombre_curso
+ - codigo_categoria
+ - duracion_horas_curso
+
+Tabla docente:
+ - codigo_usuario
+ - codigo_categoria
+ - email_docente
+ - telefono_docente
+
+Tabla salon:
+ - codigo_salon
+ - aforo_salon
+
+Tabla horario:
+ - codigo_horario
+ - dia_horario
+ - hora_inicio_horario
+ - hora_fin_horario
+
+Tabla curso_docente_salon:
+ - codigo_curso_docente_salon
+ - codigo_curso
+ - codigo_docente
+ - codigo_salon
+ - fecha_inicio_curso
+ - fecha_fin_curso
+
+Tabla curso_horario:
+ - codigo_curso_docente_salon
+ - codigo_horario
+
+Tabla tipo_nota:
+ - codigo_tipo_nota
+ - nombre_tipo_nota
+
+Tabla nota:
+ - codigo_alumno
+ - codigo_curso
+ - codigo_tipo_nota
+ - valor_nota
+ - fecha_nota
