@@ -47,7 +47,7 @@ create table tb_curso(
 create table tb_docente(
 	codigo_usuario int primary key,
     codigo_categoria int not null,
-    email_docente varchar(50) unique not null,
+    email_docente varchar(100) unique not null,
     telefono_docente char(9) unique not null,
     constraint fk_usuario foreign key (codigo_usuario) references tb_usuario (codigo_usuario),
     constraint fk_categoria_docente foreign key (codigo_categoria) references tb_categoria (codigo_categoria)
