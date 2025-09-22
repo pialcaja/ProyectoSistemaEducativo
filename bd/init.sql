@@ -38,7 +38,7 @@ create table tb_categoria(
 
 create table tb_curso(
 	codigo_curso int auto_increment primary key,
-    nombre_curso varchar(250) not null,
+    nombre_curso varchar(250) unique not null,
     codigo_categoria int not null,
     duracion_horas_curso int not null,
     constraint fk_categoria_curso foreign key (codigo_categoria) references tb_categoria (codigo_categoria)
@@ -58,14 +58,16 @@ create table tb_salon(
     aforo_salon int not null
 );
 
-create table tb_dia(
+-- SE MODIFICA LA TABLA DIA POR UN ENUM EN EL BACK --
+/** create table tb_dia(
 	codigo_dia int auto_increment primary key,
     nombre_dia varchar(9) not null
-);
+); **/
 
 create table tb_horario(
 	codigo_horario int auto_increment primary key,
-    codigo_dia int not null,
+    dia_horario varchar(9) not null,
+--    codigo_dia int not null,
     hora_inicio_horario time not null,
     hora_fin_horario time not null,
     constraint fk_dia foreign key (codigo_dia) references tb_dia (codigo_dia)
