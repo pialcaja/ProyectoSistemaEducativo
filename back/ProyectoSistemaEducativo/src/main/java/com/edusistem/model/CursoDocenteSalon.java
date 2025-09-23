@@ -24,7 +24,7 @@ public class CursoDocenteSalon {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int codigoCursoDocenteSalon;
+	private Long codigoCursoDocenteSalon;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "codigo_curso", nullable = false)
