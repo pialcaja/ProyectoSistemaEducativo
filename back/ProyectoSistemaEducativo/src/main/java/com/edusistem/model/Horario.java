@@ -23,7 +23,7 @@ public class Horario {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int codigoHorario;
+	private Long codigoHorario;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 9)

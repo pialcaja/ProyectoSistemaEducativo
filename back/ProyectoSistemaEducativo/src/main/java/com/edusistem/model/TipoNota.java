@@ -11,16 +11,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tb_curso")
+@Table(name = "tb_tipo_nota")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Salon {
+public class TipoNota {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long codigoSalon;
+	private Long codigoTipoNota;
 	
-	@Column(nullable = false)
-	private int aforoSalon;
+	@Column(nullable = false, unique = true, length = 50)
+	private String nombreTipoNota;
 }

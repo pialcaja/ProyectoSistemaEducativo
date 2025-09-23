@@ -11,11 +11,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CursoHorarioId implements Serializable {
+public class NotaId implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long cursoDocenteSalon;
+	private Long alumno;
 	
-	private Long horario;
+	private Long curso;
+	
+	private Long tipoNota;
 }

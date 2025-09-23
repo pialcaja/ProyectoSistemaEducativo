@@ -69,8 +69,7 @@ create table tb_horario(
     dia_horario varchar(9) not null,
 --    codigo_dia int not null,
     hora_inicio_horario time not null,
-    hora_fin_horario time not null,
-    constraint fk_dia foreign key (codigo_dia) references tb_dia (codigo_dia)
+    hora_fin_horario time not null
 );
 
 create table tb_curso_docente_salon(
