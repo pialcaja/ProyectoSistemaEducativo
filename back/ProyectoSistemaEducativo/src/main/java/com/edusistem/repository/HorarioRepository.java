@@ -14,6 +14,6 @@ public interface HorarioRepository extends JpaRepository<Horario, Long> {
 
 	List<Horario> findByDiaHorario(Dia dia);
 	
-	@Query("SELECT h FROM tb_horario h WHERE h.horaInicioHorario >= :inicio AND h.horaFinHorario <= :fin")
+	@Query("SELECT h FROM Horario h WHERE h.horaInicioHorario >= :inicio AND h.horaFinHorario <= :fin")
 	List<Horario> buscarEntreHoras(@Param("inicio") LocalTime inicio, @Param("fin") LocalTime fin);
 }

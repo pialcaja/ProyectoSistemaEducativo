@@ -16,7 +16,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	
 	List<Usuario> findByEstadoUsuario(EstadoUsuario estadoUsuario);
 	
-	@Query("SELECT u FROM tb_usuario u " + 
+	@Query("SELECT u FROM Usuario u " + 
 			"WHERE LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :nombre, '%')) " +
 			"AND LOWER(u.apellidoPaternoUsuario) LIKE LOWER(CONCAT('%', :apellido, '%'))")
 	List<Usuario> buscarPorNombreApellido(@Param("nombre") String nombre, @Param("apellido") String apellido);
