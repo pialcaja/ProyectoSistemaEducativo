@@ -43,9 +43,9 @@ public class SecurityConfig {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeHttpRequests()
-                .requestMatchers("/auth/**").permitAll() // login es público
-                .requestMatchers("/admin/**").hasRole("ADMIN") // solo admin autenticado
-                .anyRequest().denyAll(); // deniega cualquier otro endpoint
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
