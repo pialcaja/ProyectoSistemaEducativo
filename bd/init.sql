@@ -14,14 +14,14 @@ create table tb_usuario(
     apellido_materno_usuario varchar(50) not null,
     dni_usuario char(8) unique not null,
     codigo_tipo_usuario int not null,
-    estado_usuario enum('activo','inactivo') not null,
+    estado_usuario enum('ACTIVO','INACTIVO') not null,
     constraint fk_tipo_usuario foreign key (codigo_tipo_usuario) references tb_tipo_usuario (codigo_tipo_usuario)
 );
 
 create table tb_administrador(
 	codigo_usuario int primary key,
     email_administrador varchar(100) unique not null,
-    pwd_administrador varchar(20) not null,
+    pwd_administrador varchar(250) not null,
     constraint fk_usuario_administrador foreign key (codigo_usuario) references tb_usuario (codigo_usuario)
 );
 
@@ -57,12 +57,6 @@ create table tb_salon(
 	codigo_salon int auto_increment primary key,
     aforo_salon int not null
 );
-
--- SE MODIFICA LA TABLA DIA POR UN ENUM EN EL BACK --
-/** create table tb_dia(
-	codigo_dia int auto_increment primary key,
-    nombre_dia varchar(9) not null
-); **/
 
 create table tb_horario(
 	codigo_horario int auto_increment primary key,
@@ -109,8 +103,46 @@ create table tb_nota(
     constraint fk_tipo_nota foreign key (codigo_tipo_nota) references tb_tipo_nota (codigo_tipo_nota)
 );
 
+-- INDICES
 create index idx_usuario_estado on tb_usuario (estado_usuario);
 create index idx_alumno_edad on tb_alumno (edad_alumno);
 create index idx_curso_categoria on tb_curso (codigo_categoria);
 create index idx_docente_categoria on tb_docente (codigo_categoria);
 create index idx_usuario_nombre_apellido on tb_usuario (nombre_usuario, apellido_paterno_usuario);
+
+-- INSERTS
+-- TIPO USUARIO
+INSERT INTO tb_tipo_usuario (nombre_tipo_usuario)
+VALUES ('ADMIN');
+
+-- USUARIO PRINCIPAL
+INSERT INTO tb_usuario (
+    nombre_usuario,
+    apellido_paterno_usuario,
+    apellido_materno_usuario,
+    dni_usuario,
+    codigo_tipo_usuario,
+    estado_usuario
+) VALUES (
+    'Piero',               -- nombre_usuario
+    'Caro',              -- apellido_paterno_usuario
+    'Jara',               -- apellido_materno_usuario
+    '12345678',            -- dni_usuario
+    (SELECT codigo_tipo_usuario 
+     FROM tb_tipo_usuario 
+     WHERE nombre_tipo_usuario = 'ADMIN'), 
+    'ACTIVO'
+);
+
+-- ADMINISTRADOR ASOCIADO AL USUARIO PRINCIPAL
+INSERT INTO tb_administrador (
+    codigo_usuario,
+    email_administrador,
+    pwd_administrador
+) VALUES (
+    (SELECT codigo_usuario 
+     FROM tb_usuario 
+     WHERE dni_usuario = '12345678'), 
+    'piero@colegio.com', 
+    '$2a$10$RjRdnnaldjsLMjBDhlkwSecqNKGs5ZQ6GP882le/3USf3XOQAq82S'
+);
