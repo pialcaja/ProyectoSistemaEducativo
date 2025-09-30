@@ -20,6 +20,6 @@ public interface DocenteRepository extends JpaRepository<Docente, Long> {
 	List<Docente> findByCategoriaCodigoCategoria(Long codigoCategoria);
 	
 	@Query("SELECT d FROM Docente d " +
-	           "WHERE (:nombre IS NULL OR LOWER(d.usuario.nombreUsuario) LIKE LOWER(CONCAT('%', :nombre, '%')))")
+	           "WHERE (:nombre IS NULL OR LOWER(d.nombreUsuario) LIKE LOWER(CONCAT('%', :nombre, '%')))")
 	Page<Docente> buscarPorNombre(@Param("nombre") String nombre, Pageable pageable);
 }
