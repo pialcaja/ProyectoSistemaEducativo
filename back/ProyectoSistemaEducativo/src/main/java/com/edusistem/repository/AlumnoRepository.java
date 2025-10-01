@@ -19,4 +19,6 @@ public interface AlumnoRepository extends JpaRepository<Alumno, Long> {
 	
 	@Query("SELECT a FROM Alumno a WHERE a.estadoUsuario = :estado")
     Page<Alumno> findByEstadoUsuario(@Param("estado") EstadoUsuario estado, Pageable pageable);
+	
+	boolean existsByCodigoUsuario(Long id);
 }
