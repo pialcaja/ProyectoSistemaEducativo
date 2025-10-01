@@ -55,7 +55,7 @@ create table tb_docente(
 
 create table tb_salon(
 	codigo_salon int auto_increment primary key,
-    aforo_salon int not null
+    capacidad_maxima int not null default 20
 );
 
 create table tb_horario(
@@ -103,12 +103,24 @@ create table tb_nota(
     constraint fk_tipo_nota foreign key (codigo_tipo_nota) references tb_tipo_nota (codigo_tipo_nota)
 );
 
+create table tb_matricula (
+	codigo_matricula int auto_increment primary key,
+    codigo_alumno int not null,
+    codigo_curso_docente_salon int not null,
+    fecha_matricula datetime not null default current_timestamp,
+    estado_matricula enum('ACTIVA','FINALIZADA','RETIRADA') default 'ACTIVA',
+    constraint fk_matricula_alumno foreign key (codigo_alumno) references tb_alumno (codigo_usuario) on delete cascade,
+    constraint fk_matricula_curso_docente_salon foreign key (codigo_curso_docente_salon) references tb_curso_docente_salon (codigo_curso_docente_salon) on delete cascade
+);
+
 -- INDICES
 create index idx_usuario_estado on tb_usuario (estado_usuario);
 create index idx_alumno_edad on tb_alumno (edad_alumno);
 create index idx_curso_categoria on tb_curso (codigo_categoria);
 create index idx_docente_categoria on tb_docente (codigo_categoria);
 create index idx_usuario_nombre_apellido on tb_usuario (nombre_usuario, apellido_paterno_usuario);
+create index idx_matricula_alumno on tb_matricula(codigo_alumno);
+create index idx_matricula_curso on tb_matricula(codigo_curso_docente_salon);
 
 -- INSERTS
 -- TIPO USUARIO
