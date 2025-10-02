@@ -17,6 +17,17 @@ public interface AdministradorRepository extends JpaRepository<Administrador, Lo
 
     Optional<Administrador> findByEmailAdministrador(String emailAdministrador);
 
-    @Query("SELECT a FROM Administrador a WHERE a.estadoUsuario = :estado")
-    Page<Administrador> listarAdministradoresActivos(@Param("estado") EstadoUsuario estado, Pageable pageable);
+    @Query("SELECT a FROM Administrador a " +
+    	       "WHERE a.estadoUsuario = :estado " +
+    	       "AND (:filtro IS NULL OR " +
+    	       "LOWER(a.nombreUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
+    	       "OR LOWER(a.apellidoPaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
+    	       "OR LOWER(a.apellidoMaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%'))) ")
+    	Page<Administrador> buscarPorEstadoYNombre(@Param("estado") EstadoUsuario estado,
+    	                                           @Param("filtro") String filtro,
+    	                                           Pageable pageable);
+    
+    boolean existsByEmailAdministrador(String emailAdministrador);
+
+    boolean existsByEmailAdministradorAndCodigoUsuarioNot(String emailAdministrador, Long id);
 }

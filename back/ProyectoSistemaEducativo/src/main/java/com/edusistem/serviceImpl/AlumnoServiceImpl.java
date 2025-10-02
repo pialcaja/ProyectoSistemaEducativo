@@ -1,10 +1,7 @@
 package com.edusistem.serviceImpl;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +14,8 @@ import org.springframework.stereotype.Service;
 import com.edusistem.dto.AlumnoDTO;
 import com.edusistem.dto.AlumnoRegistroRequest;
 import com.edusistem.model.Alumno;
+import com.edusistem.model.EstadoUsuario;
+import com.edusistem.model.TipoUsuario;
 import com.edusistem.model.Usuario;
 import com.edusistem.repository.AlumnoRepository;
 import com.edusistem.repository.TipoUsuarioRepository;
@@ -40,13 +39,16 @@ public class AlumnoServiceImpl implements AlumnoService {
     	Map<String, Object> response = new HashMap<>();
         try {
             Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id " + request.getUsuarioId()));
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            TipoUsuario tipoAlumno = tipoUsuarioRepository.findByNombreTipoUsuarioIgnoreCase("ALUMNO")
+                    .orElseThrow(() -> new RuntimeException("Tipo de usuario ALUMNO no encontrado"));
+            usuario.setTipoUsuario(tipoAlumno);
+            usuarioRepository.save(usuario);
 
             Alumno alumno = new Alumno();
+            alumno.setCodigoUsuario(usuario.getCodigoUsuario());
             alumno.setEdadAlumno(request.getEdad());
-            alumno.setTipoUsuario(usuario.getTipoUsuario());
-            alumno.setEstadoUsuario(usuario.getEstadoUsuario());
-
             Alumno alumnoGuardado = alumnoRepository.save(alumno);
 
             response.put("success", true);
@@ -76,38 +78,27 @@ public class AlumnoServiceImpl implements AlumnoService {
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> listarAlumnos(int page, int size, String filtro, String sortBy,
-			String sortDir) {
-		Map<String, Object> response = new HashMap<>();
-		try {
-			Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
-					: Sort.by(sortBy).descending();
+	public ResponseEntity<Map<String, Object>> listarAlumnos(int page, int size, String filtro, String sortBy, String sortDir, String estado) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
 
-			Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-			Page<Alumno> alumnos;
-			if (filtro != null && !filtro.isEmpty()) {
-				alumnos = alumnoRepository.findAll(pageable).map(a -> a);
-			} else {
-				alumnos = alumnoRepository.findAll(pageable);
-			}
+        EstadoUsuario estadoFinal = (estado == null || estado.isEmpty())
+                ? EstadoUsuario.ACTIVO
+                : EstadoUsuario.valueOf(estado.toUpperCase());
 
-			List<AlumnoDTO> dtoList = alumnos.getContent().stream().map(this::mapToDTO).collect(Collectors.toList());
+        Page<Alumno> alumnos = alumnoRepository.buscarPorEstadoYNombre(estadoFinal, filtro, pageable);
 
-			response.put("success", true);
-			response.put("data", dtoList);
-			response.put("currentPage", alumnos.getNumber());
-			response.put("totalItems", alumnos.getTotalElements());
-			response.put("totalPages", alumnos.getTotalPages());
+        Map<String, Object> response = new HashMap<>();
+        response.put("alumnos", alumnos.getContent());
+        response.put("currentPage", alumnos.getNumber());
+        response.put("totalItems", alumnos.getTotalElements());
+        response.put("totalPages", alumnos.getTotalPages());
 
-			return ResponseEntity.ok(response);
-
-		} catch (Exception e) {
-			response.put("success", false);
-			response.put("message", "Error al listar alumnos: " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		}
-	}
+        return ResponseEntity.ok(response);
+    }
 
 	@Override
 	public ResponseEntity<Map<String, Object>> actualizarAlumno(Long id, AlumnoRegistroRequest request) {
@@ -132,32 +123,6 @@ public class AlumnoServiceImpl implements AlumnoService {
 		}
 	}
 
-	@Override
-	public ResponseEntity<Map<String, Object>> eliminarAlumno(Long id) {
-		Map<String, Object> response = new HashMap<>();
-		try {
-			Optional<Alumno> alumnoOpt = alumnoRepository.findById(id);
-			if (alumnoOpt.isEmpty()) {
-				response.put("success", false);
-				response.put("message", "Alumno no encontrado");
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-			}
-
-			Alumno alumno = alumnoOpt.get();
-			
-			alumnoRepository.delete(alumno);
-
-			response.put("success", true);
-			response.put("message", "Alumno eliminado correctamente con sus matrículas");
-			return ResponseEntity.ok(response);
-
-		} catch (Exception e) {
-			response.put("success", false);
-			response.put("message", "Error al eliminar alumno: " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-		}
-	}
-
 	private AlumnoDTO mapToDTO(Alumno alumno) {
         String nombreCompleto = alumno.getNombreUsuario() + " " +
                 alumno.getApellidoPaternoUsuario() + " " +
@@ -165,9 +130,8 @@ public class AlumnoServiceImpl implements AlumnoService {
 
         return new AlumnoDTO(
                 alumno.getCodigoUsuario(),
-                alumno.getEdadAlumno(),
                 nombreCompleto,
-                alumno.getEstadoUsuario().name()
+                alumno.getEdadAlumno()
         );
     }
 }

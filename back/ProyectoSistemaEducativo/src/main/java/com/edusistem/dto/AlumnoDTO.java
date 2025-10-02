@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 public class AlumnoDTO {
 
 	private Long id;
-	private int edad;
 	private String nombreCompleto;
-	private String estado;
+	private int edad;
 }

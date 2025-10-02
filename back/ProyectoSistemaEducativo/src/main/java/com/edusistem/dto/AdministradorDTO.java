@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class AdministradorDTO {
 
 	private Long id;
-	private String email;
 	private String nombreCompleto;
+	private String email;
 }

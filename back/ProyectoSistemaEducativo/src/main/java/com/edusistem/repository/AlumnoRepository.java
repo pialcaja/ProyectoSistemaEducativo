@@ -17,8 +17,15 @@ public interface AlumnoRepository extends JpaRepository<Alumno, Long> {
 
 	List<Alumno> findByEdadAlumnoGreaterThanEqual(int edadAlumno);
 	
-	@Query("SELECT a FROM Alumno a WHERE a.estadoUsuario = :estado")
-    Page<Alumno> findByEstadoUsuario(@Param("estado") EstadoUsuario estado, Pageable pageable);
+	@Query("SELECT a FROM Alumno a " +
+		       "WHERE a.estadoUsuario = :estado " +
+		       "AND (:filtro IS NULL OR " +
+		       "LOWER(a.nombreUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
+		       "OR LOWER(a.apellidoPaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
+		       "OR LOWER(a.apellidoMaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%'))) ")
+		Page<Alumno> buscarPorEstadoYNombre(@Param("estado") EstadoUsuario estado,
+		                                    @Param("filtro") String filtro,
+		                                    Pageable pageable);
 	
 	boolean existsByCodigoUsuario(Long id);
 }

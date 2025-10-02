@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.edusistem.model.Docente;
+import com.edusistem.model.EstadoUsuario;
 
 @Repository
 public interface DocenteRepository extends JpaRepository<Docente, Long> {
@@ -20,6 +21,20 @@ public interface DocenteRepository extends JpaRepository<Docente, Long> {
 	List<Docente> findByCategoriaCodigoCategoria(Long codigoCategoria);
 	
 	@Query("SELECT d FROM Docente d " +
-	           "WHERE (:nombre IS NULL OR LOWER(d.nombreUsuario) LIKE LOWER(CONCAT('%', :nombre, '%')))")
-	Page<Docente> buscarPorNombre(@Param("nombre") String nombre, Pageable pageable);
+		       "WHERE d.estadoUsuario = :estado " +
+		       "AND (:filtro IS NULL OR " +
+		       "LOWER(d.nombreUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
+		       "OR LOWER(d.apellidoPaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
+		       "OR LOWER(d.apellidoMaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%'))) ")
+		Page<Docente> buscarPorEstadoYNombre(@Param("estado") EstadoUsuario estado,
+		                                     @Param("filtro") String filtro,
+		                                     Pageable pageable);
+	
+	boolean existsByEmailDocente(String emailDocente);
+	
+	boolean existsByTelefonoDocente(String telefonoDocente);
+
+	boolean existsByEmailDocenteAndCodigoUsuarioNot(String emailDocente, Long id);
+	
+	boolean existsByTelefonoDocenteAndCodigoUsuarioNot(String telefonoDocente, Long id);
 }

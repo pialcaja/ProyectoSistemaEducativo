@@ -21,9 +21,16 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	List<Usuario> findByEstadoUsuario(EstadoUsuario estadoUsuario);
 	
 	@Query("SELECT u FROM Usuario u " +
-	           "WHERE (:filtro IS NULL OR " +
-	           "LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
-	           "OR LOWER(u.apellidoPaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
-	           "OR LOWER(u.apellidoMaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')))")
-	Page<Usuario> buscarPorNombreCompleto(@Param("filtro") String filtro, Pageable pageable);
+		       "WHERE u.estadoUsuario = :estado " +
+		       "AND (:filtro IS NULL OR " +
+		       "LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
+		       "OR LOWER(u.apellidoPaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
+		       "OR LOWER(u.apellidoMaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%'))) ")
+		Page<Usuario> buscarPorEstadoYNombre(@Param("estado") EstadoUsuario estado,
+		                                     @Param("filtro") String filtro,
+		                                     Pageable pageable);
+	
+	boolean existsByDniUsuario(String dniUsuario);
+
+	boolean existsByDniUsuarioAndCodigoUsuarioNot(String dniUsuario, Long id);
 }
