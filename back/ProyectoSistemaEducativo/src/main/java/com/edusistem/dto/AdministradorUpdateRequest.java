@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DocenteRegistroRequest {
+public class AdministradorUpdateRequest {
 
 	private String email;
-	private Long usuarioId;
-	private Long categoriaId;
-	private String telefono;
+	private String pwd;
 }

@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class AdministradorRegistroRequest {
 
 	private String email;
+	private String pwd;
 	private Long usuarioId;
 }

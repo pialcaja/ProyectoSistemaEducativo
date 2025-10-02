@@ -13,6 +13,7 @@ import com.edusistem.dto.LoginRequest;
 import com.edusistem.dto.RefreshTokenRequest;
 import com.edusistem.security.JwtUtils;
 import com.edusistem.service.AuthService;
+import com.edusistem.utils.TextoUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,15 +29,15 @@ public class AuthServiceImpl implements AuthService {
 	public AuthResponse login(LoginRequest loginRequest) {
 		Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
+                        TextoUtils.formatoTodoMinuscula(loginRequest.getEmail()),
                         loginRequest.getPassword()
                 )
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String accessToken = jwtUtils.generateAccessToken(loginRequest.getEmail());
-        String refreshToken = jwtUtils.generateRefreshToken(loginRequest.getEmail());
+        String accessToken = jwtUtils.generateAccessToken(TextoUtils.formatoTodoMinuscula(loginRequest.getEmail()));
+        String refreshToken = jwtUtils.generateRefreshToken(TextoUtils.formatoTodoMinuscula(loginRequest.getEmail()));
 
         return AuthResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
 	}
