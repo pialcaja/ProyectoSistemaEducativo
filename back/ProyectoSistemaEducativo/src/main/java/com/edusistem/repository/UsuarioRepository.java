@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.edusistem.model.EstadoUsuario;
+import com.edusistem.model.TipoUsuario;
 import com.edusistem.model.Usuario;
 
 @Repository
@@ -33,4 +34,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	boolean existsByDniUsuario(String dniUsuario);
 
 	boolean existsByDniUsuarioAndCodigoUsuarioNot(String dniUsuario, Long id);
+	
+	long countByTipoUsuario(TipoUsuario tipoUsuario);
 }

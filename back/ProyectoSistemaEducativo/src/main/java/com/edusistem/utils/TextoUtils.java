@@ -14,4 +14,8 @@ public class TextoUtils {
 	public static String formatoTodoMinuscula(String texto) {
         return texto == null ? null : texto.trim().toLowerCase();
     }
+	
+	public static String formatoTodoMayuscula(String texto) {
+        return texto == null ? null : texto.trim().toUpperCase();
+    }
 }
