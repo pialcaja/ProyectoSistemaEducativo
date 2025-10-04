@@ -14,45 +14,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.edusistem.dto.TipoUsuarioDTO;
-import com.edusistem.service.TipoUsuarioService;
+import com.edusistem.dto.CategoriaRegistroRequest;
+import com.edusistem.service.CategoriaService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/tipoUsuario")
+@RequestMapping("/api/categoria")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
-public class TipoUsuarioController {
+public class CategoriaController {
 
-	private final TipoUsuarioService tipoUsuarioService;
+	private final CategoriaService categoriaService;
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> registrar(@RequestBody TipoUsuarioDTO request) {
-        return tipoUsuarioService.registrarTipoUsuario(request);
+    public ResponseEntity<Map<String, Object>> registrar(@RequestBody CategoriaRegistroRequest request) {
+        return categoriaService.registrarCategoria(request);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> obtenerPorId(@PathVariable Long id) {
-        return tipoUsuarioService.obtenerTipoUsuarioPorId(id);
+        return categoriaService.obtenerCategoriaPorId(id);
     }
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> listar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "codigoTipoUsuario") String sortBy,
+            @RequestParam(defaultValue = "codigoCategoria") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir) {
-        return tipoUsuarioService.listarTiposUsuario(page, size, sortBy, sortDir);
+        return categoriaService.listarCategorias(page, size, sortBy, sortDir);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> actualizar(@PathVariable Long id, @RequestBody TipoUsuarioDTO request) {
-        return tipoUsuarioService.actualizarTipoUsuario(id, request);
+    public ResponseEntity<Map<String, Object>> actualizar(@PathVariable Long id, @RequestBody CategoriaRegistroRequest request) {
+        return categoriaService.actualizarCategoria(id, request);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> eliminar(@PathVariable Long id) {
-        return tipoUsuarioService.eliminarTipoUsuario(id);
+        return categoriaService.eliminarCategoria(id);
     }
 }

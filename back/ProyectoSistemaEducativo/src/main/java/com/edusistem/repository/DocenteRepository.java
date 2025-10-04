@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.edusistem.model.Categoria;
 import com.edusistem.model.Docente;
 import com.edusistem.model.EstadoUsuario;
 
@@ -37,4 +38,6 @@ public interface DocenteRepository extends JpaRepository<Docente, Long> {
 	boolean existsByEmailDocenteAndCodigoUsuarioNot(String emailDocente, Long id);
 	
 	boolean existsByTelefonoDocenteAndCodigoUsuarioNot(String telefonoDocente, Long id);
+	
+	long countByCategoria(Categoria categoria);
 }
