@@ -158,3 +158,7 @@ INSERT INTO tb_administrador (
     'piero@colegio.com', 
     '$2a$10$RjRdnnaldjsLMjBDhlkwSecqNKGs5ZQ6GP882le/3USf3XOQAq82S'
 );
+
+-- CATEGORIA
+INSERT INTO tb_categoria (nombre_categoria)
+VALUES ('Matematica');
