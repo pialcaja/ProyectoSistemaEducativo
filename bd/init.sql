@@ -161,4 +161,4 @@ INSERT INTO tb_administrador (
 
 -- CATEGORIA
 INSERT INTO tb_categoria (nombre_categoria)
-VALUES ('Matematica');
+VALUES ('Matematica'), ('Letras');
