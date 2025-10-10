@@ -22,15 +22,15 @@ public class Curso {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long codigoCurso;
+	private Long id;
 	
-	@Column(nullable = false, unique = true, length = 250)
-	private String nombreCurso;
+	@Column(nullable = false, unique = true, length = 100)
+	private String nombre;
+	
+	@Column(nullable = true)
+	private String descripcion;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codigo_categoria", nullable = false)
-	private Categoria categoria;
-	
-	@Column(nullable = false)
-	private int duracionHorasCurso;
+	@JoinColumn(name = "id_materia", nullable = false)
+	private Materia materia;
 }

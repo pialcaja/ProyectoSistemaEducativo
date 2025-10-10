@@ -12,22 +12,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "tb_curso_horario")
+@Table(name = "tb_cds_horario")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CursoHorario {
+public class CdsHorario {
 
 	@EmbeddedId
-	private CursoHorarioId id;
+	private CdsHorarioId id;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@MapsId("cursoDocenteSalon")
-	@JoinColumn(name = "codigo_curso_docente_salon", nullable = false)
-	private CursoDocenteSalon cursoDocenteSalon;
+	@MapsId("cds")
+	@JoinColumn(name = "id_cds", nullable = false)
+	private CursoDocenteSalon cds;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@MapsId("horario")
-	@JoinColumn(name = "codigo_horario", nullable = false)
+	@JoinColumn(name = "id_horario", nullable = false)
 	private Horario horario;
 }

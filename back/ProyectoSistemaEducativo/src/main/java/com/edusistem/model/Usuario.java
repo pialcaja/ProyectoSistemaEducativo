@@ -1,9 +1,9 @@
 package com.edusistem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,25 +27,31 @@ public class Usuario {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long codigoUsuario;
+	private Long id;
 	
 	@Column(nullable = false, length = 50)
-    private String nombreUsuario;
+    private String nombre;
 
 	@Column(nullable = false, length = 50)
-    private String apellidoPaternoUsuario;
+    private String apepa;
 
 	@Column(nullable = false, length = 50)
-    private String apellidoMaternoUsuario;
+    private String apema;
     
 	@Column(nullable = false, unique = true, length = 8)
-    private String dniUsuario;
+    private String dni;
+
+	@Column(nullable = false, unique = true, length = 100)
+	private String email;
+
+	@Column(nullable = false, length = 60)
+	private String pwd;
     
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codigo_tipo_usuario", nullable = false)
-    private TipoUsuario tipoUsuario;
-    
-	@Enumerated(EnumType.STRING)
-	@Column(name = "estado_usuario", nullable = false, length = 10)
-    private EstadoUsuario estadoUsuario;
+	@JoinColumn(name = "id_rol", nullable = false)
+    private Rol rol;
+
+	@Column(nullable = false)
+    private int estado;
 }

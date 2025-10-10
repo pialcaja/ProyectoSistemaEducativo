@@ -1,11 +1,11 @@
 package com.edusistem.model;
 
 public enum Dia {
-	Lunes,
-	Martes,
-	Miercoles,
-	Jueves,
-	Viernes,
-	Sabado,
-	Domingo
+	LUNES,
+	MARTES,
+	MIERCOLES,
+	JUEVES,
+	VIERNES,
+	SABADO,
+	DOMINGO
 }

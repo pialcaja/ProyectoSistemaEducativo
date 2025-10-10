@@ -23,15 +23,15 @@ public class Horario {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long codigoHorario;
+	private Long id;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 9)
-	private Dia diaHorario;
+	private Dia dia;
 	
 	@Column(nullable = false)
-	private Time horaInicioHorario;
+	private Time horaInicio;
 	
 	@Column(nullable = false)
-	private Time horaFinHorario;
+	private Time horaFin;
 }
