@@ -17,7 +17,7 @@ create table tb_usuario(
     apema varchar(50) not null,
     dni char(8) unique not null,
     email varchar(100) unique not null,
-    pwd varchar(250) not null,
+    pwd varchar(60) not null,
     id_rol int not null,
     estado int default 1,
     constraint fk_usuario_rol foreign key (id_rol) references tb_rol (id)
@@ -45,7 +45,7 @@ create table tb_materia(
 -- CURSO
 create table tb_curso(
 	id int auto_increment primary key,
-    nombre varchar(250) unique not null,
+    nombre varchar(100) unique not null,
     descripcion text,
     id_materia int not null,
     constraint fk_curso_materia foreign key (id_materia) references tb_materia (id)
@@ -68,10 +68,10 @@ create table tb_salon(
 
 -- DETALLE - CURSO, DOCENTE Y SALON
 create table tb_curso_docente_salon(
-	id int auto_increment primary key,
     id_curso int not null,
     id_docente int not null,
     id_salon int not null,
+    primary key (id_curso, id_docente, id_salon),
     constraint fk_cds_curso foreign key (id_curso) references tb_curso (id),
     constraint fk_cds_usuario_docente foreign key (id_docente) references tb_docente (id),
     constraint fk_cds_salon foreign key (id_salon) references tb_salon (id)
@@ -100,7 +100,7 @@ create table tb_matricula (
     id_alumno int not null,
     id_cds int not null,
     fecha_creacion datetime not null default current_timestamp,
-    estado int default 1,
+    estado enum('ACTIVA','FINALIZADA','RETIRADA') not null,
     constraint fk_matricula_alumno foreign key (id_alumno) references tb_alumno (id),
     constraint fk_matricula_cds foreign key (id_cds) references tb_curso_docente_salon (id)
 );
@@ -158,4 +158,4 @@ VALUES (1);
 
 -- MATERIA
 INSERT INTO tb_materia (nombre)
-VALUES ('Matematica'), ('Letras'), ('Ciencias');
+VALUES ('MATEMATICA'), ('LETRAS'), ('CIENCIAS');
