@@ -1,19 +1,11 @@
 package com.edusistem.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,29 +17,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CursoDocenteSalon {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long codigoCursoDocenteSalon;
+	
+	@EmbeddedId
+	private CursoDocenteSalonId id;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codigo_curso", nullable = false)
+	@MapsId("curso")
+	@JoinColumn(name = "id_curso", nullable = false)
 	private Curso curso;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codigo_docente", nullable = false)
+	@MapsId("docente")
+	@JoinColumn(name = "id_docente", nullable = false)
 	private Docente docente;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codigo_salon", nullable = false)
+	@MapsId("salon")
+	@JoinColumn(name = "id_salon", nullable = false)
 	private Salon salon;
-	
-	@Column(nullable = false)
-	private Date fechaInicioCurso;
-	
-	@Column(nullable = false)
-	private Date fechaFinCurso;
-	
-	@OneToMany(mappedBy = "cursoDocenteSalon", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Matricula> matriculas = new ArrayList<>();
 }

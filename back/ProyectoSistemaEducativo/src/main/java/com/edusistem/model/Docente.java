@@ -20,16 +20,13 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@PrimaryKeyJoinColumn(name = "codigo_usuario")
+@PrimaryKeyJoinColumn(name = "id")
 public class Docente extends Usuario {
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "codigo_categoria", nullable = false)
-	private Categoria categoria;
-	
-	@Column(nullable = false, unique = true, length = 100)
-	private String emailDocente;
+	@JoinColumn(name = "id_materia", nullable = false)
+	private Materia materia;
 
 	@Column(nullable = false, unique = true, length = 9)
-	private String telefonoDocente;
+	private String telefono;
 }

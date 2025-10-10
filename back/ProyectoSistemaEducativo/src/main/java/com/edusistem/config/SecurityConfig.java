@@ -55,4 +55,9 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    
+//	// METODO PARA ENCRYPTAR Y VER LA PASSWORD
+//	public static void main(String[] args) {
+//		System.out.println("Password: " + new BCryptPasswordEncoder().encode("Piero123@"));
+//	}
 }

@@ -2,6 +2,8 @@ package com.edusistem.model;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -25,20 +27,21 @@ public class Matricula {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long codigoMatricula;
+	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "codigo_alumno", nullable = false)
+	@JoinColumn(name = "id_alumno", nullable = false)
 	private Alumno alumno;
 	
 	@ManyToOne
-	@JoinColumn(name = "codigo_curso_docente_salon", nullable = false)
-	private CursoDocenteSalon cursoDocenteSalon;
+	@JoinColumn(name = "id_cds", nullable = false)
+	private CursoDocenteSalon cds;
 	
 	@Column(nullable = false, updatable = false)
-	private LocalDateTime fechaMatricula = LocalDateTime.now();
+	@CreationTimestamp
+	private LocalDateTime fechaCreacion = LocalDateTime.now();
 	
 	@Enumerated(EnumType.STRING)
-	@Column(length = 15, nullable = false)
-	private EstadoMatricula estadoMatricula = EstadoMatricula.ACTIVA;
+	@Column(nullable = false, length = 15)
+	private EstadoMatricula estado = EstadoMatricula.ACTIVA;
 }
