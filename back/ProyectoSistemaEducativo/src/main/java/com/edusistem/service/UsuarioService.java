@@ -4,17 +4,17 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 
-import com.edusistem.dto.UsuarioRegistroRequest;
+import com.edusistem.dto.UsuarioRequestDTO;
 
 public interface UsuarioService {
 
-	ResponseEntity<Map<String, Object>> registrarUsuario(UsuarioRegistroRequest request);
+    public ResponseEntity<Map<String, Object>> listar(int page, int size, String sortBy, String order, String filtro);
+    
+	public ResponseEntity<Map<String, Object>> registrar(UsuarioRequestDTO dto);
 
-    ResponseEntity<Map<String, Object>> obtenerUsuarioPorId(Long id);
+	public ResponseEntity<Map<String, Object>> obtenerPorId(Long id);
 
-    public ResponseEntity<Map<String, Object>> listarUsuarios(int page, int size, String filtro, String sortBy, String sortDir, String estado);
+    public ResponseEntity<Map<String, Object>> actualizar(Long id, UsuarioRequestDTO dto);
 
-    ResponseEntity<Map<String, Object>> actualizarUsuario(Long id, UsuarioRegistroRequest request);
-
-    ResponseEntity<Map<String, Object>> eliminarUsuario(Long id);
+    public ResponseEntity<Map<String, Object>> eliminar(Long id);
 }
