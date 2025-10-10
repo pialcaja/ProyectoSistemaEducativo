@@ -1,6 +1,5 @@
 package com.edusistem.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -10,30 +9,29 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.edusistem.model.EstadoUsuario;
-import com.edusistem.model.TipoUsuario;
 import com.edusistem.model.Usuario;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+	
+	Optional<Usuario> findByEmail(String email);
+	
+	Optional<Usuario> findByDni(String dni);
+	
+	boolean existsByEmail(String email);
+	
+	boolean existsByDni(String dni);
+	
+	boolean existsByDniAndIdNot(String dni, Long id);
 
-	Optional<Usuario> findByDniUsuario(String dniUsuario);
+	boolean existsByEmailAndIdNot(String email, Long id);
 	
-	List<Usuario> findByEstadoUsuario(EstadoUsuario estadoUsuario);
-	
-	@Query("SELECT u FROM Usuario u " +
-		       "WHERE u.estadoUsuario = :estado " +
-		       "AND (:filtro IS NULL OR " +
-		       "LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
-		       "OR LOWER(u.apellidoPaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%')) " +
-		       "OR LOWER(u.apellidoMaternoUsuario) LIKE LOWER(CONCAT('%', :filtro, '%'))) ")
-		Page<Usuario> buscarPorEstadoYNombre(@Param("estado") EstadoUsuario estado,
-		                                     @Param("filtro") String filtro,
-		                                     Pageable pageable);
-	
-	boolean existsByDniUsuario(String dniUsuario);
-
-	boolean existsByDniUsuarioAndCodigoUsuarioNot(String dniUsuario, Long id);
-	
-	long countByTipoUsuario(TipoUsuario tipoUsuario);
+	@Query("""
+			SELECT u FROM Usuario u
+			WHERE LOWER(u.nombre) LIKE LOWER(CONCAT('%', :filtro, '%'))
+			   OR LOWER(u.apepa) LIKE LOWER(CONCAT('%', :filtro, '%'))
+			   OR LOWER(u.apema) LIKE LOWER(CONCAT('%', :filtro, '%'))
+			   OR LOWER(u.email) LIKE LOWER(CONCAT('%', :filtro, '%'))
+			""")
+	Page<Usuario> buscarPorFiltro(@Param("filtro") String filtro, Pageable pageable);
 }

@@ -2,6 +2,7 @@ package com.edusistem.controller;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,48 +15,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.edusistem.dto.UsuarioRegistroRequest;
+import com.edusistem.dto.UsuarioRequestDTO;
 import com.edusistem.service.UsuarioService;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController
-@RequestMapping("/usuario")
-@RequiredArgsConstructor
+@RequestMapping("/api/usuario")
 @CrossOrigin(origins = "http://localhost:4200")
 public class UsuarioController {
 
-	private final UsuarioService usuarioService;
+	@Autowired
+	private UsuarioService usuarioService;
 
-    @PostMapping
-    public ResponseEntity<Map<String, Object>> registrarUsuario(@RequestBody UsuarioRegistroRequest request) {
-        return usuarioService.registrarUsuario(request);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> obtenerUsuarioPorId(@PathVariable Long id) {
-        return usuarioService.obtenerUsuarioPorId(id);
-    }
-
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> listarUsuarios(
+    @GetMapping("/listar")
+    public ResponseEntity<Map<String, Object>> listar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String filtro,
-            @RequestParam(defaultValue = "codigoUsuario") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir,
-            @RequestParam(required = false) String estado) {
-        return usuarioService.listarUsuarios(page, size, filtro, sortBy, sortDir, estado);
+            @RequestParam(required = false) String filtro) {
+        return usuarioService.listar(page, size, filtro, sortDir, filtro);
+    }
+	
+    @PostMapping("/registrar")
+    public ResponseEntity<Map<String, Object>> registrar(@RequestBody UsuarioRequestDTO dto) {
+        return usuarioService.registrar(dto);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> actualizarUsuario(@PathVariable Long id,
-                                                                 @RequestBody UsuarioRegistroRequest request) {
-        return usuarioService.actualizarUsuario(id, request);
+    @GetMapping("/obtener/{id}")
+    public ResponseEntity<Map<String, Object>> obtener(@PathVariable Long id) {
+        return usuarioService.obtenerPorId(id);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> eliminarUsuario(@PathVariable Long id) {
-        return usuarioService.eliminarUsuario(id);
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<Map<String, Object>> actualizar(@PathVariable Long id, @RequestBody UsuarioRequestDTO dto) {
+        return usuarioService.actualizar(id, dto);
+    }
+
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Map<String, Object>> eliminar(@PathVariable Long id) {
+        return usuarioService.eliminar(id);
     }
 }
