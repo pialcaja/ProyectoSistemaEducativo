@@ -3,7 +3,7 @@ package com.edusistem.dto;
 import lombok.Data;
 
 @Data
-public class UsuarioRequestDTO {
+public class UsuarioUpdateDTO {
 
 	private String nombre;
 	private String apepa;
@@ -11,4 +11,8 @@ public class UsuarioRequestDTO {
 	private String dni;
 	private String email;
 	private String pwd;
+	
+	private Integer edad;
+	private Long materiaId;
+	private String telefono;
 }

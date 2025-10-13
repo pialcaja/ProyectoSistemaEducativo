@@ -22,4 +22,22 @@ public class Alumno extends Usuario {
 
 	@Column(nullable = false)
 	private int edad;
+
+	public static Alumno desdeUsuarioBase(Usuario base, Rol rol, int edad) {
+		Alumno a = new Alumno();
+		a.setId(base.getId());
+		a.setNombre(base.getNombre());
+		a.setApepa(base.getApepa());
+		a.setApema(base.getApema());
+		a.setDni(base.getDni());
+		a.setEmail(base.getEmail());
+		a.setPwd(base.getPwd());
+		a.setRol(rol);
+		a.setEstado(base.getEstado());
+		a.setEdad(edad);
+		
+		return a;
+	}
+	
+	
 }

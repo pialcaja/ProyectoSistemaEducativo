@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.edusistem.dto.UsuarioRequestDTO;
+import com.edusistem.dto.UsuarioUpdateDTO;
 import com.edusistem.service.UsuarioService;
 
 @RestController
@@ -30,9 +31,10 @@ public class UsuarioController {
     public ResponseEntity<Map<String, Object>> listar(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "nombre") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir,
             @RequestParam(required = false) String filtro) {
-        return usuarioService.listar(page, size, filtro, sortDir, filtro);
+        return usuarioService.listar(page, size, sortBy, sortDir, filtro);
     }
 	
     @PostMapping("/registrar")
@@ -46,7 +48,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/actualizar/{id}")
-    public ResponseEntity<Map<String, Object>> actualizar(@PathVariable Long id, @RequestBody UsuarioRequestDTO dto) {
+    public ResponseEntity<Map<String, Object>> actualizar(@PathVariable Long id, @RequestBody UsuarioUpdateDTO dto) {
         return usuarioService.actualizar(id, dto);
     }
 
