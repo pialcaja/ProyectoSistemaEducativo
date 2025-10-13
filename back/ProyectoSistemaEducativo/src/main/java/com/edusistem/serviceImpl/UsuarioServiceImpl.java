@@ -15,8 +15,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.edusistem.dto.UsuarioRequestDTO;
+import com.edusistem.dto.UsuarioUpdateDTO;
+import com.edusistem.model.Alumno;
+import com.edusistem.model.Docente;
+import com.edusistem.model.Materia;
 import com.edusistem.model.Rol;
 import com.edusistem.model.Usuario;
+import com.edusistem.repository.DocenteRepository;
+import com.edusistem.repository.MateriaRepository;
 import com.edusistem.repository.RolRepository;
 import com.edusistem.repository.UsuarioRepository;
 import com.edusistem.service.UsuarioService;
@@ -32,6 +38,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 	
 	@Autowired
 	private RolRepository rolRepo;
+	
+	@Autowired
+	private MateriaRepository materiaRepo;
+	
+	@Autowired
+	private DocenteRepository docenteRepo;
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
@@ -74,15 +86,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 	public ResponseEntity<Map<String, Object>> registrar(UsuarioRequestDTO dto) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-			if (usuarioRepo.existsByEmail(TextoUtils.formatoTodoMinuscula(dto.getEmail()))) {
-				response.put("mensaje", "Email ya enlazado a otro usuario");
-				return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-			}
-			
-			if (usuarioRepo.existsByDni(dto.getDni())) {
-				response.put("mensaje", "DNI ya enlazado a otro usuario");
-				return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-			}
+
+			validarDuplicadosUsuario(dto.getEmail(), dto.getDni(), null);
 
 			Usuario usuario = new Usuario();
 			usuario.setNombre(TextoUtils.formatoPrimeraLetraMayuscula(dto.getNombre()));
@@ -122,26 +127,15 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	@Transactional
-	public ResponseEntity<Map<String, Object>> actualizar(Long id, UsuarioRequestDTO dto) {
+	public ResponseEntity<Map<String, Object>> actualizar(Long id, UsuarioUpdateDTO dto) {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Usuario usuario = usuarioRepo.findById(id)
 					.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-			if (!usuario.getDni().equals(dto.getDni())
-					&& usuarioRepo.existsByDniAndIdNot(dto.getDni(), id)) {
-				response.put("mensaje", "DNI ya enlazado a otro usuario");
-				
-				return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-			}
-			
-			if (!usuario.getEmail().equals(TextoUtils.formatoTodoMinuscula(dto.getEmail()))
-					&& usuarioRepo.existsByEmailAndIdNot(TextoUtils.formatoTodoMinuscula(dto.getEmail()), id)) {
-				response.put("mensaje", "Email ya enlazado a otro usuario");
-				
-				return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-			}
+			validarDuplicadosUsuario(dto.getEmail(), dto.getDni(), null);
 
+			// CAMPOS GENERALES
 			usuario.setNombre(TextoUtils.formatoPrimeraLetraMayuscula(dto.getNombre()));
 			usuario.setApepa(TextoUtils.formatoPrimeraLetraMayuscula(dto.getApepa()));
 			usuario.setApema(TextoUtils.formatoPrimeraLetraMayuscula(dto.getApema()));
@@ -150,6 +144,22 @@ public class UsuarioServiceImpl implements UsuarioService {
 			
 			if (dto.getPwd() != null && !dto.getPwd().isBlank()) {
 				usuario.setPwd(passwordEncoder.encode(dto.getPwd()));
+			}
+			
+			// CAMPOS ESPECIFICOS POR ROL
+			if (usuario instanceof Alumno alumno) {
+				if (dto.getEdad() != 0) {
+					alumno.setEdad(dto.getEdad());
+				}
+			} else if (usuario instanceof Docente docente) {
+				Materia materia = materiaRepo.findById(dto.getMateriaId()).orElseThrow(() 
+						-> new RuntimeException("Materia no encontrada"));
+				
+				docente.setMateria(materia);
+				
+				validarTelefonoDocente(dto.getTelefono(), id);
+				
+				docente.setTelefono(dto.getTelefono());
 			}
 			
 			usuario.setEstado(usuario.getEstado());
@@ -192,6 +202,33 @@ public class UsuarioServiceImpl implements UsuarioService {
 			response.put("mensaje", "Error al desactivar usuario: " + e.getMessage());
 			
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		}
+	}
+
+	private void validarDuplicadosUsuario(String email, String dni, Long idExcluido) {
+		email = TextoUtils.formatoTodoMinuscula(email);
+
+		boolean existeEmail = (idExcluido == null) ? usuarioRepo.existsByEmail(email)
+				: usuarioRepo.existsByEmailAndIdNot(email, idExcluido);
+
+		boolean existeDni = (idExcluido == null) ? usuarioRepo.existsByDni(dni)
+				: usuarioRepo.existsByDniAndIdNot(dni, idExcluido);
+
+		if (existeEmail) {
+			throw new RuntimeException("Email ya enlazado a otro usuario");
+		}
+
+		if (existeDni) {
+			throw new RuntimeException("DNI ya enlazado a otro usuario");
+		}
+	}
+	
+	private void validarTelefonoDocente(String telefono, Long idExcluido) {
+		boolean existeTelefono = (idExcluido == null) ? docenteRepo.existsByTelefono(telefono)
+				: docenteRepo.existsByTelefonoAndIdNot(telefono, idExcluido);
+
+		if (existeTelefono) {
+			throw new RuntimeException("Teléfono ya enlazado a otro docente");
 		}
 	}
 }

@@ -29,4 +29,22 @@ public class Docente extends Usuario {
 
 	@Column(nullable = false, unique = true, length = 9)
 	private String telefono;
+	
+	public static Docente desdeUsuarioBase(Usuario base, Rol rol, Materia materia, String telefono) {
+		Docente d = new Docente();
+		d.setId(base.getId());
+		d.setNombre(base.getNombre());
+		d.setApepa(base.getApepa());
+		d.setApema(base.getApema());
+		d.setDni(base.getDni());
+		d.setEmail(base.getEmail());
+		d.setPwd(base.getPwd());
+		d.setRol(rol);
+		d.setEstado(base.getEstado());
+		d.setMateria(materia);
+		d.setTelefono(telefono);
+		
+		return d;
+		
+	}
 }
