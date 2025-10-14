@@ -16,4 +16,7 @@ public class AuthResponse {
 	
 	@Builder.Default
 	private String tokenType = "Bearer";
+	
+	private String nombre;
+	private String rol;
 }
