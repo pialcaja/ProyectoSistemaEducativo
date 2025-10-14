@@ -68,10 +68,10 @@ create table tb_salon(
 
 -- DETALLE - CURSO, DOCENTE Y SALON
 create table tb_curso_docente_salon(
+	id int auto_increment primary key,
     id_curso int not null,
     id_docente int not null,
     id_salon int not null,
-    primary key (id_curso, id_docente, id_salon),
     constraint fk_cds_curso foreign key (id_curso) references tb_curso (id),
     constraint fk_cds_usuario_docente foreign key (id_docente) references tb_docente (id),
     constraint fk_cds_salon foreign key (id_salon) references tb_salon (id)
@@ -87,9 +87,9 @@ create table tb_horario(
 
 -- DETALLE - CURSO, DOCENTE, SALON, HORARIO
 create table tb_cds_horario(
+	id int auto_increment primary key,
 	id_cds int not null,
     id_horario int not null,
-    primary key (id_cds, id_horario),
     constraint fk_cds_horario_cds foreign key (id_cds) references tb_curso_docente_salon (id),
     constraint fk_cds_horario_horario foreign key (id_horario) references tb_horario (id)
 );
