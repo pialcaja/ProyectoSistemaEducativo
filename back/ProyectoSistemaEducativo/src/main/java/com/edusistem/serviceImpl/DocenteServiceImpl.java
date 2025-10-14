@@ -61,17 +61,20 @@ public class DocenteServiceImpl implements DocenteService {
 			Rol rolDocente = rolRepo.findByNombreIgnoreCase("DOCENTE")
 					.orElseThrow(() -> new RuntimeException("Rol DOCENTE no encontrado"));
 
-			Docente docente = Docente.desdeUsuarioBase(usuarioBase, rolDocente, materia, dto.getTelefono());
+			usuarioBase.setRol(rolDocente);
+			usuarioRepo.save(usuarioBase);
+			
+			Docente docente = new Docente();
+			docente.setUsuario(usuarioBase);
+			docente.setMateria(materia);
+			docente.setTelefono(dto.getTelefono());
 			
 			docenteRepo.save(docente);
-			
-			usuarioRepo.delete(usuarioBase);
 			
 			response.put("mensaje", "Registro de docente completado exitosamente");
 			response.put("docente", docente);
 			
 			return ResponseEntity.ok(response);
-			
 		} catch (Exception e) {
 			response.put("mensaje", "Error al completar el registro de docente: " + e.getMessage());
 			

@@ -7,19 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.edusistem.dto.AlumnoRequestDTO;
-import com.edusistem.model.Alumno;
+import com.edusistem.model.Administrador;
 import com.edusistem.model.Rol;
 import com.edusistem.model.Usuario;
-import com.edusistem.repository.AlumnoRepository;
+import com.edusistem.repository.AdministradorRepository;
 import com.edusistem.repository.RolRepository;
 import com.edusistem.repository.UsuarioRepository;
-import com.edusistem.service.AlumnoService;
+import com.edusistem.service.AdministradorService;
 
 @Service
-public class AlumnoServiceImpl implements AlumnoService {
+public class AdministradorServiceImpl implements AdministradorService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepo;
@@ -28,43 +26,41 @@ public class AlumnoServiceImpl implements AlumnoService {
 	private RolRepository rolRepo;
 	
 	@Autowired
-	private AlumnoRepository alumnoRepo;
+	private AdministradorRepository administradorRepo;
 	
-	@Transactional
 	@Override
-	public ResponseEntity<Map<String, Object>> completarRegistro(Long usuarioId, AlumnoRequestDTO dto) {
+	public ResponseEntity<Map<String, Object>> completarRegistro(Long usuarioId) {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Usuario usuarioBase = usuarioRepo.findById(usuarioId)
 					.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
+			
 			if (!usuarioBase.getRol().getNombre().equalsIgnoreCase("PENDIENTE")) {
 				response.put("mensaje", "El usuario ya tiene un rol asignado");
 				
 				return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
 			}
-
-			Rol rolAlumno = rolRepo.findByNombreIgnoreCase("ALUMNO")
-					.orElseThrow(() -> new RuntimeException("Rol ALUMNO no encontrado"));
-
-			usuarioBase.setRol(rolAlumno);
-	        usuarioRepo.save(usuarioBase);
-
-	        Alumno alumno = new Alumno();
-	        alumno.setUsuario(usuarioBase);
-	        alumno.setEdad(dto.getEdad());
-	        
-	        alumnoRepo.save(alumno);
-
-	        response.put("mensaje", "Registro de alumno completado exitosamente");
-	        response.put("alumno", alumno);
-	        
-	        return ResponseEntity.ok(response);
-
+			
+			Rol rolAdmin = rolRepo.findByNombreIgnoreCase("ADMIN")
+					.orElseThrow(() -> new RuntimeException("Rol ADMIN no encontrado"));
+			
+			usuarioBase.setRol(rolAdmin);
+			usuarioRepo.save(usuarioBase);
+			
+			Administrador admin = new Administrador();
+			admin.setUsaurio(usuarioBase);
+			
+			administradorRepo.save(admin);
+			
+			response.put("mensaje", "Registro de administrador completado exitosamente");
+			response.put("admin", admin);
+			
+			return ResponseEntity.ok(response);
 		} catch (Exception e) {
-			response.put("mensaje", "Error al completar registro de alumno: " + e.getMessage());
+			response.put("mensaje", "Error al completar el registro de administrador: " + e.getMessage());
 			
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 		}
 	}
+
 }

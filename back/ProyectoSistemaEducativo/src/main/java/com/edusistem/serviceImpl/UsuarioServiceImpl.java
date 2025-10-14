@@ -21,6 +21,7 @@ import com.edusistem.model.Docente;
 import com.edusistem.model.Materia;
 import com.edusistem.model.Rol;
 import com.edusistem.model.Usuario;
+import com.edusistem.repository.AlumnoRepository;
 import com.edusistem.repository.DocenteRepository;
 import com.edusistem.repository.MateriaRepository;
 import com.edusistem.repository.RolRepository;
@@ -38,6 +39,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 	
 	@Autowired
 	private RolRepository rolRepo;
+	
+	@Autowired
+	private AlumnoRepository alumnoRepo;
 	
 	@Autowired
 	private MateriaRepository materiaRepo;
@@ -133,7 +137,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 			Usuario usuario = usuarioRepo.findById(id)
 					.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-			validarDuplicadosUsuario(dto.getEmail(), dto.getDni(), null);
+			validarDuplicadosUsuario(dto.getEmail(), dto.getDni(), id);
 
 			// CAMPOS GENERALES
 			usuario.setNombre(TextoUtils.formatoPrimeraLetraMayuscula(dto.getNombre()));
@@ -141,28 +145,53 @@ public class UsuarioServiceImpl implements UsuarioService {
 			usuario.setApema(TextoUtils.formatoPrimeraLetraMayuscula(dto.getApema()));
 			usuario.setDni(dto.getDni());
 			usuario.setEmail(TextoUtils.formatoTodoMinuscula(dto.getEmail()));
+			usuario.setEstado(usuario.getEstado());
 			
 			if (dto.getPwd() != null && !dto.getPwd().isBlank()) {
 				usuario.setPwd(passwordEncoder.encode(dto.getPwd()));
 			}
 			
 			// CAMPOS ESPECIFICOS POR ROL
-			if (usuario instanceof Alumno alumno) {
-				if (dto.getEdad() != 0) {
-					alumno.setEdad(dto.getEdad());
-				}
-			} else if (usuario instanceof Docente docente) {
-				Materia materia = materiaRepo.findById(dto.getMateriaId()).orElseThrow(() 
-						-> new RuntimeException("Materia no encontrada"));
-				
-				docente.setMateria(materia);
-				
-				validarTelefonoDocente(dto.getTelefono(), id);
-				
-				docente.setTelefono(dto.getTelefono());
-			}
-			
-			usuario.setEstado(usuario.getEstado());
+			String rol = usuario.getRol().getNombre().toUpperCase();
+
+	        switch (rol) {
+
+	            case "ALUMNO" -> {
+	                Alumno alumno = alumnoRepo.findById(usuario.getId())
+	                        .orElseThrow(() -> new RuntimeException("Registro de alumno no encontrado"));
+
+	                if (dto.getEdad() != null && dto.getEdad() > 0) {
+	                    alumno.setEdad(dto.getEdad());
+	                }
+
+	                alumnoRepo.save(alumno);
+	            }
+
+	            case "DOCENTE" -> {
+	                Docente docente = docenteRepo.findById(usuario.getId())
+	                        .orElseThrow(() -> new RuntimeException("Registro de docente no encontrado"));
+
+	                if (dto.getMateriaId() != null) {
+	                    Materia materia = materiaRepo.findById(dto.getMateriaId())
+	                            .orElseThrow(() -> new RuntimeException("Materia no encontrada"));
+	                    docente.setMateria(materia);
+	                }
+
+	                if (dto.getTelefono() != null && !dto.getTelefono().isBlank()) {
+	                    validarTelefonoDocente(dto.getTelefono(), usuario.getId());
+	                    docente.setTelefono(dto.getTelefono());
+	                }
+
+	                docenteRepo.save(docente);
+	            }
+
+	            case "ADMIN" -> {
+	            }
+
+	            default -> {
+	                throw new RuntimeException("Rol no válido para actualización: " + rol);
+	            }
+	        }
 
 			usuarioRepo.save(usuario);
 
@@ -183,6 +212,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Optional<Usuario> usuarioOpt = usuarioRepo.findById(id);
+			
 			if (usuarioOpt.isEmpty()) {
 				response.put("mensaje", "Usuario no encontrado");
 				
@@ -190,6 +220,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 			}
 
 			Usuario usuario = usuarioOpt.get();
+			
+			if (usuario.getEstado() == 2) {
+				response.put("mensaje", "Usuario actualmente eliminado");
+				
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			}
+			
 			usuario.setEstado(2);
 			
 			usuarioRepo.save(usuario);
@@ -201,6 +238,41 @@ public class UsuarioServiceImpl implements UsuarioService {
 		} catch (Exception e) {
 			response.put("mensaje", "Error al desactivar usuario: " + e.getMessage());
 			
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		}
+	}
+
+	@Override
+	public ResponseEntity<Map<String, Object>> recuperar(Long id) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			Optional<Usuario> usuarioOpt = usuarioRepo.findById(id);
+
+			if (usuarioOpt.isEmpty()) {
+				response.put("mensaje", "Usuario no encontrado");
+
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+			}
+
+			Usuario usuario = usuarioOpt.get();
+
+			if (usuario.getEstado() == 1) {
+				response.put("mensaje", "Usuario actualmente activo");
+
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+			}
+
+			usuario.setEstado(1);
+
+			usuarioRepo.save(usuario);
+
+			response.put("mensaje", "Usuario recuperado correctamente");
+
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			response.put("mensaje", "Error al recuperar usuario: " + e.getMessage());
+
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 		}
 	}

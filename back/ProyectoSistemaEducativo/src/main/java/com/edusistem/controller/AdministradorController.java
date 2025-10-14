@@ -6,26 +6,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.edusistem.dto.DocenteRequestDTO;
-import com.edusistem.service.DocenteService;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.edusistem.service.AdministradorService;
 
 @RestController
-@RequestMapping("/api/docente")
+@RequestMapping("/api/admin")
 @CrossOrigin(origins = "http://localhost:4200")
-public class DocenteController {
+public class AdministradorController {
 
 	@Autowired
-	private DocenteService docenteService;
+	private AdministradorService administradorService;
 	
 	@PostMapping("/completarRegistro/{usuarioId}")
-	public ResponseEntity<Map<String, Object>> completarRegistro(@PathVariable Long usuarioId, @RequestBody DocenteRequestDTO dto) {
-		return docenteService.completarRegistro(usuarioId, dto);
+	public ResponseEntity<Map<String, Object>> completarRegistro(@PathVariable Long usuarioId) {
+		return administradorService.completarRegistro(usuarioId);
 	}
-	
 }
