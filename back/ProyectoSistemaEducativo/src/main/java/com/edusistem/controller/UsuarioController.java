@@ -56,4 +56,9 @@ public class UsuarioController {
     public ResponseEntity<Map<String, Object>> eliminar(@PathVariable Long id) {
         return usuarioService.eliminar(id);
     }
+    
+    @PutMapping("/recuperar/{id}")
+    public ResponseEntity<Map<String, Object>> recuperar(@PathVariable Long id) {
+        return usuarioService.recuperar(id);
+    }
 }

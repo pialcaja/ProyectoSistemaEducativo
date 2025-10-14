@@ -18,4 +18,6 @@ public interface UsuarioService {
     public ResponseEntity<Map<String, Object>> actualizar(Long id, UsuarioUpdateDTO dto);
 
     public ResponseEntity<Map<String, Object>> eliminar(Long id);
+
+    public ResponseEntity<Map<String, Object>> recuperar(Long id);
 }

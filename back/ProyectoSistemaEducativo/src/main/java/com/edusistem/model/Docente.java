@@ -3,25 +3,30 @@ package com.edusistem.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
 @Table(name = "tb_docente")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@PrimaryKeyJoinColumn(name = "id")
-public class Docente extends Usuario {
+public class Docente {
+	
+	@Id
+	private Long id;
+	
+	@OneToOne
+	@MapsId
+	@JoinColumn(name = "id")
+	private Usuario usuario;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_materia", nullable = false)
@@ -29,22 +34,4 @@ public class Docente extends Usuario {
 
 	@Column(nullable = false, unique = true, length = 9)
 	private String telefono;
-	
-	public static Docente desdeUsuarioBase(Usuario base, Rol rol, Materia materia, String telefono) {
-		Docente d = new Docente();
-		d.setId(base.getId());
-		d.setNombre(base.getNombre());
-		d.setApepa(base.getApepa());
-		d.setApema(base.getApema());
-		d.setDni(base.getDni());
-		d.setEmail(base.getEmail());
-		d.setPwd(base.getPwd());
-		d.setRol(rol);
-		d.setEstado(base.getEstado());
-		d.setMateria(materia);
-		d.setTelefono(telefono);
-		
-		return d;
-		
-	}
 }
