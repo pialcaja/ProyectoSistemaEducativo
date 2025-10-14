@@ -3,6 +3,7 @@ package com.edusistem.security;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,10 +24,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         Usuario usuario = usuarioRepo.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
         
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + usuario.getRol().getNombre().toUpperCase());
+        
         return new org.springframework.security.core.userdetails.User(
-        	usuario.getEmail(),
-        	usuario.getPwd(),
-            List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
-        );
+        		usuario.getEmail(), 
+        		usuario.getPwd(), 
+        		List.of(authority));
     }
 }
