@@ -7,6 +7,6 @@
         <input type="password" id="password" name="password" [(ngModel)]="password" placeholder="password" required>
     </div>
     <div class="formBotones">
-        <button type="submit" >Ingresar</button>
+        <button type="submit" [disabled]="!loginForm.valid">Ingresar</button>
     </div>
 </form>
