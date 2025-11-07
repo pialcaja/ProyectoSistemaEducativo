@@ -1,8 +1,11 @@
 package com.edusistem.serviceImpl;
 
+import java.util.Collection;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -43,7 +46,9 @@ public class AuthServiceImpl implements AuthService {
         Usuario usuario = usuarioRepo.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        String accessToken = jwtUtils.generateAccessToken(TextoUtils.formatoTodoMinuscula(loginRequest.getEmail()));
+        Collection<? extends GrantedAuthority> roles = authentication.getAuthorities();
+        
+        String accessToken = jwtUtils.generateAccessToken(TextoUtils.formatoTodoMinuscula(loginRequest.getEmail()), roles);
         String refreshToken = jwtUtils.generateRefreshToken(TextoUtils.formatoTodoMinuscula(loginRequest.getEmail()));
 
         return AuthResponse.builder().accessToken(accessToken).refreshToken(refreshToken)
@@ -62,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
             Usuario usuario = usuarioRepo.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
             
-            String newAccessToken = jwtUtils.generateAccessToken(userDetails.getUsername());
+            String newAccessToken = jwtUtils.generateAccessToken(userDetails.getUsername(), userDetails.getAuthorities());
             String newRefreshToken = jwtUtils.generateRefreshToken(userDetails.getUsername());
 
             return AuthResponse.builder().accessToken(newAccessToken).refreshToken(newRefreshToken)

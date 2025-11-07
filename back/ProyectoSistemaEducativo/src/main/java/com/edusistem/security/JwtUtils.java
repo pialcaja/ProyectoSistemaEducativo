@@ -1,9 +1,14 @@
 package com.edusistem.security;
 
 import java.security.Key;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.JwtException;
@@ -27,16 +32,22 @@ public class JwtUtils {
         this.jwtRefreshTokenExpirationMs = jwtRefreshTokenExpirationMs;
     }
 
-    public String generateAccessToken(String username) {
-        return buildToken(username, jwtAccessTokenExpirationMs);
+    public String generateAccessToken(String username, Collection<? extends GrantedAuthority> roles) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
+
+        return buildToken(claims, username, jwtAccessTokenExpirationMs);
     }
 
     public String generateRefreshToken(String username) {
-        return buildToken(username, jwtRefreshTokenExpirationMs);
+        return buildToken(new HashMap<>(), username, jwtRefreshTokenExpirationMs);
     }
 
-    private String buildToken(String username, long expiration) {
+    private String buildToken(Map<String, Object> claims, String username, long expiration) {
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + expiration))
